@@ -268,7 +268,7 @@ H5PEditor.ImageEditingPopup = (function ($, EventDispatcher) {
         editingImage.crossOrigin = crossOrigin;
       }
       else {
-        editingImage.removeAttribute('crossorigin');
+        editingImage.crossOrigin = 'Anonymous';
       }
 
       editingImage.src = imgSrc;
@@ -294,6 +294,15 @@ H5PEditor.ImageEditingPopup = (function ($, EventDispatcher) {
 
         // Load image editing scripts dynamically
         if (!scriptsLoaded) {
+          // Set crossorigin attribute
+          var crossOrigin = H5P.getCrossOrigin(imageSrc);
+          if (crossOrigin) {
+            editingImage.crossOrigin = crossOrigin;
+          }
+          else {
+            editingImage.crossOrigin = 'Anonymous';
+          }
+
           editingImage.src = imageSrc;
           loadScripts();
         }
