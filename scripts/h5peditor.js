@@ -22,6 +22,15 @@ ns.constants = {
 };
 
 /**
+ * Constants used within editor
+ *
+ * @type {{otherLibraries: string}}
+ */
+ns.constants = {
+  otherLibraries: 'Other Libraries',
+};
+
+/**
  * Keep track of our widgets.
  */
 ns.widgets = {};
