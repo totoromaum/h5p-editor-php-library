@@ -273,10 +273,13 @@ class H5PEditorAjax {
         if (isset($params)) {
           $isSubContent = isset($field->isSubContent) && $field->isSubContent == TRUE;
           if (count($field->fields) == 1 && !$isSubContent) {
-            $params = array($field->fields[0]->name => $params);
+            if (isset($params[$field->name])) {
+              $this->processField($field->fields[0], $params[$field->name]);
+            }
           }
-
-          $this->processSemantics($field->fields, $params);
+          else {
+            $this->processSemantics($field->fields, $params);
+          }
         }
         break;
 
