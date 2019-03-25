@@ -197,112 +197,11 @@ class H5PEditorAjax {
       $this->storage->markFileForCleanup($file, 0);
     }*/
 
-    // Find the main library
-    foreach ($this->core->mainJsonData['preloadedDependencies'] as $dep) {
-      if ($dep['machineName'] === $this->core->mainJsonData['mainLibrary']) {
-        $mainLibrary = $dep;
-      }
-    }
-
-    // Tag all files as temporary (this is necessary for them to be marked as permanent upon save)
-    $this->processSemantics($this->core->loadLibrarySemantics($mainLibrary['machineName'], $mainLibrary['majorVersion'], $mainLibrary['minorVersion']), $this->core->contentJsonData);
-
     H5PCore::ajaxSuccess(array(
       'h5p' => $this->core->mainJsonData,
       'content' => $this->core->contentJsonData,
       'contentTypes' => $this->getContentTypeCache()
     ));
-  }
-
-  /**
-   * Recursive function that labels all the new files as temporary
-   *
-   * @param array $semantics
-   * @param array $params
-   */
-  private function processSemantics($semantics, &$params) {
-    for ($i = 0, $s = count($semantics); $i < $s; $i++) {
-      $field = $semantics[$i];
-      if (!isset($params[$field->name])) {
-        continue;
-      }
-      $this->processField($field, $params[$field->name]);
-    }
-  }
-
-  /**
-   * Process a single field.
-   *
-   * @param object $field
-   * @param mixed $params
-   */
-  private function processField(&$field, &$params) {
-    switch ($field->type) {
-      case 'file':
-      case 'image':
-        if (isset($params['path'])) {
-          $this->processFile($params);
-
-          // Process original image
-          if (isset($params['originalImage']) && isset($params['originalImage']['path'])) {
-            $this->processFile($params['originalImage']);
-          }
-        }
-        break;
-
-      case 'video':
-      case 'audio':
-        if (isset($params[0])) {
-          for ($i = 0, $s = count($params); $i < $s; $i++) {
-            $this->processFile($params[$i]);
-          }
-        }
-        break;
-
-      case 'library':
-        if (isset($params['library']) && isset($params['params'])) {
-          $library = H5PCore::libraryFromString($params['library']);
-          $semantics = $this->core->loadLibrarySemantics($library['machineName'], $library['majorVersion'], $library['minorVersion']);
-
-          // Process parameters for the library.
-          $this->processSemantics($semantics, $params['params']);
-        }
-        break;
-
-      case 'group':
-        if (isset($params)) {
-          $isSubContent = isset($field->isSubContent) && $field->isSubContent == TRUE;
-          if (count($field->fields) == 1 && !$isSubContent) {
-            if (isset($params[$field->name])) {
-              $this->processField($field->fields[0], $params[$field->name]);
-            }
-          }
-          else {
-            $this->processSemantics($field->fields, $params);
-          }
-        }
-        break;
-
-      case 'list':
-        if (isset($params[0])) {
-          for ($j = 0, $t = count($params); $j < $t; $j++) {
-            $this->processField($field->field, $params[$j]);
-          }
-        }
-        break;
-    }
-  }
-
-  /**
-   * @param mixed $params
-   */
-  private function processFile(&$params) {
-    if (preg_match('/^https?:\/\//', $params['path'])) {
-      return; // Skip external files
-    }
-
-    // Add temporary file suffix
-    $params['path'] .= '#tmp';
   }
 
   /**
