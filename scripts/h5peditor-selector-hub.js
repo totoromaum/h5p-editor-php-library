@@ -191,9 +191,9 @@ ns.SelectorHub = function (libraries, selectedLibrary, changeLibraryDialog) {
           if (params !== undefined) {
             const isSubContent = (field.isSubContent == true);
             if (field.fields.length == 1 && !isSubContent) {
-              if (params[field.name] !== undefined) {
+              if (params !== undefined) {
                 isDone = false; // Async
-                processField(field.fields[0], params[field.name], done);
+                processField(field.fields[0], params, done);
               }
             }
             else {
