@@ -40,7 +40,7 @@ class H5peditorFile {
       $this->type = $_FILES['file']['type'];
     }
 
-    $this->extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+    $this->extension = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION); // TODO: Use explode() instead.
     $this->size = $_FILES['file']['size'];
   }
 
@@ -88,6 +88,8 @@ class H5peditorFile {
     if (isset($this->result->error)) {
       return FALSE;
     }
+
+    $this->interface->checkFile($_FILES['file']['name'], file_get_contents($_FILES['file']['tmp_name']));
 
     // Check for field type.
     if (!isset($this->field->type)) {
