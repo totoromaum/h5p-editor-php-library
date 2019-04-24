@@ -89,7 +89,7 @@ class H5peditorFile {
       return FALSE;
     }
 
-    $this->interface->checkFile($_FILES['file']['name'], file_get_contents($_FILES['file']['tmp_name']));
+    $this->interface->checkFile($_FILES['file']['name'], file_get_contents($_FILES['file']['tmp_name'], FALSE, NULL, 0, 1024));
 
     // Check for field type.
     if (!isset($this->field->type)) {
