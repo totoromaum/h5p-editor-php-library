@@ -228,6 +228,9 @@ ns.widgets.image.prototype.addFile = function () {
       that.openFileSelector();
       return false;
     })
+    .children('img')
+    .attr('src', source)
+    .end()
     .next()
     .click(function () {
       that.confirmRemovalDialog.show(that.$file.offset().top);
@@ -235,17 +238,10 @@ ns.widgets.image.prototype.addFile = function () {
     });
 
   var $img = this.$file.find('img');
-  if (H5P.getCrossOrigin !== undefined) {
-    const crossorigin = H5P.getCrossOrigin(source);
-    if (crossorigin) {
-      $img.attr('crossorigin', crossorigin);
-    }
-  }
   $img.one('load', function () {
     // Make editor resize
     $img.addClass('loaded');
   });
-  $img.attr('src', source);
 
   // Uploading original image
   that.$editImage.removeClass('hidden');
