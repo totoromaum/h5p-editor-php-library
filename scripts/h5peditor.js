@@ -303,10 +303,17 @@ ns.resetLoadedLibraries = function () {
 ns.renderCommonField = function (machineName, libraries) {
   var commonFields = ns.renderableCommonFields[machineName].fields;
   var renderableCommonFields = [];
+  var ancestor;
 
   commonFields.forEach(function (field) {
     if (!field.rendered) {
-      var commonField = ns.addCommonField(field.field, field.parent, field.params, field.ancestor);
+      var commonField = ns.addCommonField(
+        field.field,
+        field.parent,
+        field.params,
+        field.ancestor,
+        true
+      );
       if (commonField.setValues.length === 1) {
         renderableCommonFields.push({
           field: field,
@@ -359,6 +366,14 @@ ns.renderCommonField = function (machineName, libraries) {
       // Gather under a common ancestor
       if (commonField.field && commonField.field.ancestor) {
         ancestor = commonField.field.ancestor;
+
+        // Ensure that params are updated after common field instance is
+        // appended since this ensures that defaults are set for common fields
+        const field = commonField.field;
+        const library = field.parent.currentLibrary;
+        const fieldName = field.field.name;
+        const ancestorField = ancestor.commonFields[library][fieldName];
+        ancestorField.params = field.params[fieldName];
       }
     });
 
@@ -515,7 +530,7 @@ ns.setCommonFieldsWrapper = function (parent, wrapper) {
  * @param {object} parent
  * @param {object} params
  * @param {object} ancestor
- * @param {boolean} skipAppendTo
+ * @param {boolean} [skipAppendTo] Skips appending the common field if set
  * @returns {undefined}
  */
 ns.addCommonField = function (field, parent, params, ancestor, skipAppendTo) {
@@ -553,7 +568,7 @@ ns.addCommonField = function (field, parent, params, ancestor, skipAppendTo) {
 
   if (commonField.setValues.length === 1) {
     ancestor.$common.parent().removeClass('hidden');
-    if (skipAppendTo) {
+    if (!skipAppendTo) {
       commonField.instance.appendTo(ancestor.$common);
     }
     commonField.params = params[field.name];
