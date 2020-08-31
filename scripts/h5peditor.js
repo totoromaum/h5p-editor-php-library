@@ -1686,6 +1686,7 @@ ns.upgradeContent = (function () {
 ns.rtlLanguages = ['ar', 'dv', 'he', 'ku', 'fa', 'ur'];
 
 // List of language code mappings used by the editor
+// NOTE: If you change this you need to update the one in h5p.classes.php as well.
 ns.supportedLanguages = {
   'aa': 'Afar',
   'ab': 'Abkhazian (аҧсуа бызшәа)',
