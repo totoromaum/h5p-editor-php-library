@@ -91,6 +91,9 @@ ns.Html.prototype.createToolbar = function () {
     this.tags.push("li");
   }
   if (this.inTags("blockquote")) paragraph.push("Blockquote");
+  if (this.inButtons('language')) {
+    paragraph.push('Language');
+  }
   if (paragraph.length > 0) {
     toolbar.push(paragraph);
   }
@@ -307,6 +310,13 @@ ns.Html.prototype.appendTo = function ($wrapper) {
 
   ns.bindImportantDescriptionEvents(this, this.field.name, this.parent);
 
+  const supportedLanguages = [];
+  for (const langCode in ns.supportedLanguages) {
+    if (ns.supportedLanguages.hasOwnProperty(langCode)) {
+      supportedLanguages.push(langCode + ':' + ns.supportedLanguages[langCode] + (ns.rtlLanguages.indexOf(langCode) !== -1 ? ':rtl' : ''));
+    }
+  }
+
   var ckConfig = {
     extraPlugins: "",
     startupFocus: true,
@@ -314,7 +324,9 @@ ns.Html.prototype.appendTo = function ($wrapper) {
     allowedContent: true, // Disables the ckeditor content filter, might consider using it later... Must make sure it doesn't remove math...
     protectedSource: [],
     contentsCss: ns.basePath + 'styles/css/cke-contents.css', // We want to customize the CSS inside the editor
-    codeSnippet_codeClass: 'h5p-hl'
+    codeSnippet_codeClass: 'h5p-hl',
+    language: ns.contentLanguage,
+    language_list: supportedLanguages
   };
   ns.$.extend(ckConfig, this.createToolbar());
 
@@ -339,6 +351,16 @@ ns.Html.prototype.appendTo = function ($wrapper) {
 
     if (ns.Html.first) {
       CKEDITOR.basePath = ns.basePath + '/ckeditor/';
+
+      CKEDITOR.ui.on('ready', function (event) {
+        if (event.data instanceof CKEDITOR.menu) {
+          // Limit height of menu due to not being comaptible with editor resizing
+          event.data._.panel.element.setStyle('max-height', '170px');
+          const elementDoc = event.data._.element.getDocument();
+          elementDoc.getBody().setStyle('overflow', '');
+          elementDoc.getElementsByTag('html').getItem(0).setStyle('overflow', '');
+        }
+      });
     }
 
     if (ns.Html.current === that) {
