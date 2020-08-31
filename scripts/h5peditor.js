@@ -1683,6 +1683,8 @@ ns.upgradeContent = (function () {
   };
 })();
 
+ns.rtlLanguages = ['ar', 'dv', 'he', 'ku', 'fa', 'ur'];
+
 // List of language code mappings used by the editor
 ns.supportedLanguages = {
   'aa': 'Afar',
