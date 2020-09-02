@@ -92,6 +92,7 @@ ns.Html.prototype.createToolbar = function () {
   }
   if (this.inTags("blockquote")) paragraph.push("Blockquote");
   if (this.inButtons('language')) {
+    this.tags.push('span');
     paragraph.push('Language');
   }
   if (paragraph.length > 0) {
